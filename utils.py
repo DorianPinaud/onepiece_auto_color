@@ -60,9 +60,8 @@ def check_accuracy(loader, model, device="cuda"):
             x = x.to(device)
             y = y.to(device)
             preds = model(x)
-            num_correct += (preds == y).sum()
+            num_correct += torch.sum(torch.abs(preds - y) <= 0.1)
             num_pixels += torch.numel(preds)
-
     print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100}.2f")
     model.train()
 
@@ -72,8 +71,7 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
         with torch.no_grad():
-            preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
+            preds = model(x)
         torchvision.utils.save_image(preds, f"{folder}/pred_{idx}.png")
 
     model.train()

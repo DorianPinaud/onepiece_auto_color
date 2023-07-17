@@ -20,7 +20,7 @@ import torchvision
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 16
-NUM_EPOCHS = 15
+NUM_EPOCHS = 0
 NUM_WORKERS = 2
 IMAGE_HEIGHT = int(1080 / 3)
 IMAGE_WIDTH = int(720 / 3)
@@ -75,7 +75,7 @@ def main():
     model = UNet(in_channels=1, out_channels=3).to(DEVICE)
 
     if LOAD_MODEL:
-        load_checkpoint(torch.load("my_checkpoint.last.tar"), model)
+        load_checkpoint(torch.load("my_checkpoint.last.tar", map_location=torch.device(DEVICE)), model)
 
     loss_fn = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -98,7 +98,7 @@ def main():
         }
         save_checkpoint(checkpoint, f"my_checkpoint.{epoch}.tar")
         check_accuracy(val_loader, model, device=DEVICE)
-
+    
     check_accuracy(val_loader, model, device=DEVICE)
     save_predictions_as_imgs(val_loader, model, folder="saved_images/", device=DEVICE)
 
