@@ -1,0 +1,6 @@
+﻿saved_images
+.vscode
+data
+rawdata
+*.tar
+__pycache__
